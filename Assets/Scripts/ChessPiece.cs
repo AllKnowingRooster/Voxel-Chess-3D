@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using NUnit.Framework;
 using UnityEngine;
 
 
@@ -32,5 +34,14 @@ public class ChessPiece : MonoBehaviour
             transform.position = desiredPos;
         }
     }
+
+    public virtual (List<Vector2Int>,List<Vector2Int>) GetAllPossibleMoves(ref ChessPiece[,] pieceOnBoard)
+    {
+        List<Vector2Int> listMove= new List<Vector2Int>();
+        return (listMove,listMove);
+    }
+
+
+   
 
 }
