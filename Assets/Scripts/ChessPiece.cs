@@ -12,8 +12,25 @@ public enum ChessPieceType
 }
 public class ChessPiece : MonoBehaviour
 {
-    private int team;
+    public int team;
     private ChessPieceType type;
-    private int XPos;
-    private int YPos;
+    public int XPos;
+    public int YPos;
+
+    public Vector3 desiredPos;
+
+    private void Update()
+    {
+        transform.position = Vector3.Lerp(transform.position, desiredPos, Time.deltaTime * 5);
+    }
+
+    public void SetPosition(Vector3 position,bool force)
+    {
+        desiredPos = position;
+        if (force)
+        {
+            transform.position = desiredPos;
+        }
+    }
+
 }
