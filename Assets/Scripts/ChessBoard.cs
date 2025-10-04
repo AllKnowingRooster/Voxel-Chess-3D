@@ -8,6 +8,8 @@ public class ChessBoard : MonoBehaviour
     private Camera currentCamera;
     private LayerMask tileLayer;
     private LayerMask hoverLayer;
+    private LayerMask moveLayer;
+    private LayerMask killLayer;
     private Vector2Int currentPointer;
     private Vector2Int noTarget;
     private GameObject[,] listTile;
@@ -27,6 +29,8 @@ public class ChessBoard : MonoBehaviour
     private Quaternion blackRotation;
     private List<ChessPiece> whiteDeads;
     private List<ChessPiece> blackDeads;
+    private List<Vector2Int> listMove;
+    private List<Vector2Int> listKillable;
 
     private ChessPiece selectedPiece;
 
@@ -36,6 +40,8 @@ public class ChessBoard : MonoBehaviour
         row = 8;
         tileLayer = LayerMask.NameToLayer("Tile");
         hoverLayer = LayerMask.NameToLayer("Hover");
+        moveLayer = LayerMask.NameToLayer("Move");
+        killLayer = LayerMask.NameToLayer("Kill");
         currentCamera=Camera.main;
         listTile = new GameObject[row, col];
         noTarget = Vector2Int.one * -1;
@@ -54,6 +60,8 @@ public class ChessBoard : MonoBehaviour
         whiteRotation = Quaternion.Euler(0, 90, 0);
         whiteDeads = new List<ChessPiece>();
         blackDeads = new List<ChessPiece>();
+        listMove=new List<Vector2Int>();
+        listKillable=new List<Vector2Int>();
         GenerateBoard();
 
     }
@@ -73,52 +81,21 @@ public class ChessBoard : MonoBehaviour
             }
             else if (currentPointer!=noTarget && currentPointer!=tileIndex && tileIndex!=noTarget) 
             {
-                listTile[currentPointer.x, currentPointer.y].layer = tileLayer;
+                listTile[currentPointer.x, currentPointer.y].layer = ChangeLayer(currentPointer.x, currentPointer.y);
                 currentPointer = tileIndex;
                 listTile[currentPointer.x, currentPointer.y].layer = hoverLayer;
             }
             else if(tileIndex==noTarget && currentPointer!=noTarget)
             {
-                listTile[currentPointer.x, currentPointer.y].layer = tileLayer;
+                listTile[currentPointer.x, currentPointer.y].layer = ChangeLayer(currentPointer.x,currentPointer.y);
                 currentPointer = noTarget;
             }
 
             if (selectedPiece == null && currentPointer != noTarget && listChessPiece[tileIndex.x, tileIndex.y] != null && Mouse.current.leftButton.wasPressedThisFrame)
             {
                 selectedPiece = listChessPiece[tileIndex.x, tileIndex.y];
+                ShowHighlight(selectedPiece);
             }
-
-            if (selectedPiece != null && currentPointer != noTarget && Mouse.current.leftButton.wasPressedThisFrame)
-            {
-                Vector2Int prevPosition = new Vector2Int(selectedPiece.XPos, selectedPiece.YPos);
-                if (listChessPiece[tileIndex.x, tileIndex.y] != null)
-                {
-                    ChessPiece attackedPiece = listChessPiece[tileIndex.x, tileIndex.y];
-                    if (attackedPiece.team == selectedPiece.team)
-                    {
-                        return;
-                    }
-
-
-                    if (attackedPiece.team == 0)
-                    {
-                        attackedPiece.SetPosition(calculatePiecePosition(-1 - (whiteDeads.Count / (row + 2)), 8 - (whiteDeads.Count % (row + 2)), attackedPiece.team), false);
-                        whiteDeads.Add(attackedPiece);
-                    }
-                    else
-                    {
-                        attackedPiece.SetPosition(calculatePiecePosition(8 + (blackDeads.Count / (row + 2)), -1 + (blackDeads.Count % (row + 2)), attackedPiece.team), false);
-                        blackDeads.Add(attackedPiece);
-                    }
-                }
-                selectedPiece.SetPosition(calculatePiecePosition(tileIndex.x, tileIndex.y, selectedPiece.team), false);
-                selectedPiece.XPos = tileIndex.x;
-                selectedPiece.YPos = tileIndex.y;
-                listChessPiece[prevPosition.x, prevPosition.y] = null;
-                listChessPiece[tileIndex.x, tileIndex.y] = selectedPiece;
-                selectedPiece = null;
-            }
-
         }
         else
         {
@@ -136,20 +113,66 @@ public class ChessBoard : MonoBehaviour
             if (plane.Raycast(cameraRay,out distance))
             {
                 selectedPiece.SetPosition(cameraRay.GetPoint(distance),false);
-                Debug.Log("I dont miss");
+            }
+
+            if (Mouse.current.leftButton.wasReleasedThisFrame)
+            {
+                Vector2Int prevPos = new Vector2Int(selectedPiece.XPos, selectedPiece.YPos);
+                bool isValidMove = MovePiece(currentPointer.x, currentPointer.y, prevPos);
+                if (!isValidMove)
+                {
+                    ResetPiece(prevPos);
+                }
+            }
+
+        }
+    }
+
+    private void ResetPiece(Vector2Int prevPos)
+    {
+        selectedPiece.SetPosition(calculatePiecePosition(prevPos.x, prevPos.y, selectedPiece.team), false);
+        selectedPiece = null;
+        HideHighlight();
+    }
+
+    private bool MovePiece(int x,int y,Vector2Int prevPos)
+    {
+        if ((!listMove.Contains(new Vector2Int(x,y)) && !listKillable.Contains(new Vector2Int(x,y))) || currentPointer==noTarget)
+        {
+            return false;
+        }else if (listChessPiece[x,y]!=null)
+        {
+            ChessPiece overlapPiece = listChessPiece[x, y];
+            if (overlapPiece.team==selectedPiece.team)
+            {
+                return false;
+            }
+
+
+            if (overlapPiece.team == 0)
+            {
+                overlapPiece.SetPosition(calculatePiecePosition(-1 - (whiteDeads.Count / (row + 2)), 8 - (whiteDeads.Count % (row + 2)), overlapPiece.team), false);
+                whiteDeads.Add(overlapPiece);
             }
             else
             {
-                Debug.Log("I miss");
-            }
-
-            if (currentPointer == noTarget && Mouse.current.leftButton.wasPressedThisFrame)
-            {
-                selectedPiece.SetPosition(calculatePiecePosition(selectedPiece.XPos, selectedPiece.YPos, selectedPiece.team), false);
-                selectedPiece = null;
+                overlapPiece.SetPosition(calculatePiecePosition(8 + (blackDeads.Count / (row + 2)), -1 + (blackDeads.Count % (row + 2)), overlapPiece.team), false);
+                blackDeads.Add(overlapPiece);
             }
         }
-
+        selectedPiece.SetPosition(calculatePiecePosition(currentPointer.x, currentPointer.y, selectedPiece.team), false);
+        selectedPiece.XPos = currentPointer.x;
+        selectedPiece.YPos = currentPointer.y;
+        listChessPiece[prevPos.x, prevPos.y] = null;
+        listChessPiece[currentPointer.x, currentPointer.y] = selectedPiece;
+        Pawn pawn=selectedPiece.GetComponent<Pawn>();
+        if (pawn!=null)
+        {
+            pawn.isFirstMove = false;
+        }
+        selectedPiece = null;
+        HideHighlight();
+        return true;
     }
 
     private GameObject CreateObject(string name)
@@ -282,6 +305,54 @@ public class ChessBoard : MonoBehaviour
             ConfigureChessPiece(ChessPieceType.Pawn, 6, i, 1);
         }
 
+    }
+
+    private void ShowHighlight(ChessPiece piece)
+    {
+        (listMove, listKillable) = piece.GetAllPossibleMoves(ref listChessPiece);
+        for (int i=0;i<listMove.Count;i++)
+        {
+            listTile[listMove[i].x, listMove[i].y].layer = moveLayer;
+        }
+
+        for (int i = 0; i < listKillable.Count; i++)
+        {
+            listTile[listKillable[i].x, listKillable[i].y].layer = killLayer;
+        }
+
+
+    }
+
+    private void HideHighlight()
+    {
+        for (int i = 0; i < listMove.Count; i++)
+        {
+            listTile[listMove[i].x, listMove[i].y].layer = tileLayer;
+        }
+
+        for (int i = 0; i < listKillable.Count; i++)
+        {
+            listTile[listKillable[i].x, listKillable[i].y].layer = tileLayer;
+        }
+        listMove.Clear();
+        listKillable.Clear();
+    }
+
+    private LayerMask ChangeLayer(int x,int y)
+    {
+        Vector2Int pos= new Vector2Int(x,y);
+        if (listMove.Contains(pos))
+        {
+            return moveLayer;
+        }
+        else if(listKillable.Contains(pos))
+        {
+            return killLayer;
+        }
+        else
+        {
+            return tileLayer;
+        }
     }
 
 }
