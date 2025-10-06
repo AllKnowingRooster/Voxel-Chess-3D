@@ -94,13 +94,13 @@ public class Knight : ChessPiece
         {
             if (XPos - 1 >= 0)
             {
-                if (pieceOnBoard[XPos - 1, YPos + 3] != null)
+                if (pieceOnBoard[XPos - sideSpace, YPos + forwardSpace] != null)
                 {
-                    listKillable.Add(new Vector2Int(XPos - 1, YPos + 3));
+                    listKillable.Add(new Vector2Int(XPos - 1, YPos + forwardSpace));
                 }
                 else
                 {
-                    listMove.Add(new Vector2Int(XPos - 1, YPos + 3));
+                    listMove.Add(new Vector2Int(XPos - 1, YPos + forwardSpace));
                 }
             }
 

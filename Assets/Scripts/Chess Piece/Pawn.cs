@@ -21,12 +21,18 @@ public class Pawn : ChessPiece
 
         if (YPos != 7 &&pieceOnBoard[XPos+direction,YPos+1]!=null)
         {
-            listKillable.Add(new Vector2Int(XPos+direction,YPos+1));
+            if (pieceOnBoard[XPos+direction,YPos+1].team!=team)
+            {
+                listKillable.Add(new Vector2Int(XPos + direction, YPos + 1));
+            }
         }
 
         if (YPos!=0 && pieceOnBoard[XPos+direction,YPos-1]!=null)
         {
-            listKillable.Add(new Vector2Int(XPos+direction,YPos-1));
+            if (pieceOnBoard[XPos+direction,YPos-1].team!=team)
+            {
+                listKillable.Add(new Vector2Int(XPos + direction, YPos - 1));
+            }
         }
 
         return (listMove,listKillable);
