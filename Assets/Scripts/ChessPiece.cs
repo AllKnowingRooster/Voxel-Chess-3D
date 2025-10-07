@@ -15,7 +15,7 @@ public enum ChessPieceType
 public class ChessPiece : MonoBehaviour
 {
     public int team;
-    private ChessPieceType type;
+    public ChessPieceType type;
     public int XPos;
     public int YPos;
 

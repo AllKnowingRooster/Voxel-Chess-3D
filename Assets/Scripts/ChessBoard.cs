@@ -31,11 +31,11 @@ public class ChessBoard : MonoBehaviour
     private List<ChessPiece> blackDeads;
     private List<Vector2Int> listMove;
     private List<Vector2Int> listKillable;
-
     private ChessPiece selectedPiece;
-
+    private int whoTurn;
     private void Awake()
     {
+        whoTurn = 0;
         col = 8;
         row = 8;
         tileLayer = LayerMask.NameToLayer("Tile");
@@ -93,8 +93,11 @@ public class ChessBoard : MonoBehaviour
 
             if (selectedPiece == null && currentPointer != noTarget && listChessPiece[tileIndex.x, tileIndex.y] != null && Mouse.current.leftButton.wasPressedThisFrame)
             {
-                selectedPiece = listChessPiece[tileIndex.x, tileIndex.y];
-                ShowHighlight(selectedPiece);
+                if (whoTurn == listChessPiece[tileIndex.x,tileIndex.y].team)
+                {
+                    selectedPiece = listChessPiece[tileIndex.x, tileIndex.y];
+                    ShowHighlight(selectedPiece);
+                }
             }
         }
         else
@@ -140,7 +143,8 @@ public class ChessBoard : MonoBehaviour
         if ((!listMove.Contains(new Vector2Int(x,y)) && !listKillable.Contains(new Vector2Int(x,y))) || currentPointer==noTarget)
         {
             return false;
-        }else if (listChessPiece[x,y]!=null)
+        } 
+        if (listChessPiece[x,y]!=null)
         {
             ChessPiece overlapPiece = listChessPiece[x, y];
             if (overlapPiece.team==selectedPiece.team)
@@ -148,6 +152,21 @@ public class ChessBoard : MonoBehaviour
                 return false;
             }
 
+
+            if (overlapPiece.team == 0)
+            {
+                overlapPiece.SetPosition(calculatePiecePosition(-1 - (whiteDeads.Count / (row + 2)), 8 - (whiteDeads.Count % (row + 2)), overlapPiece.team), false);
+                whiteDeads.Add(overlapPiece);
+            }
+            else
+            {
+                overlapPiece.SetPosition(calculatePiecePosition(8 + (blackDeads.Count / (row + 2)), -1 + (blackDeads.Count % (row + 2)), overlapPiece.team), false);
+                blackDeads.Add(overlapPiece);
+            }
+        }else if (listChessPiece[x,y]==null && selectedPiece.type==ChessPieceType.Pawn && listKillable.Contains(new Vector2Int(x,y)))
+        {
+            int direction = selectedPiece.team == 0 ? -1 : 1;
+            ChessPiece overlapPiece = listChessPiece[x+direction , y];
 
             if (overlapPiece.team == 0)
             {
@@ -168,10 +187,12 @@ public class ChessBoard : MonoBehaviour
         Pawn pawn=selectedPiece.GetComponent<Pawn>();
         if (pawn!=null)
         {
-            pawn.isFirstMove = false;
+            pawn.totalMove++;
+            pawn.prevPosition = prevPos;
         }
         selectedPiece = null;
         HideHighlight();
+        whoTurn = whoTurn == 0 ? 1 : 0;
         return true;
     }
 
