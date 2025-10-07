@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UnityEngine;
 
 public class Knight : ChessPiece
@@ -15,7 +16,10 @@ public class Knight : ChessPiece
             {
                 if (pieceOnBoard[XPos + forwardSpace, YPos + sideSpace] != null)
                 {
-                    listKillable.Add(new Vector2Int(XPos + forwardSpace, YPos + sideSpace));
+                    if (pieceOnBoard[XPos + forwardSpace, YPos + sideSpace].team != team)
+                    {
+                        listKillable.Add(new Vector2Int(XPos + forwardSpace, YPos + sideSpace));
+                    }
                 }
                 else
                 {
@@ -27,7 +31,10 @@ public class Knight : ChessPiece
             {
                 if (pieceOnBoard[XPos+forwardSpace,YPos-sideSpace]!=null)
                 {
-                    listKillable.Add(new Vector2Int(XPos+forwardSpace, YPos-sideSpace));   
+                    if(pieceOnBoard[XPos + forwardSpace, YPos - sideSpace].team != team)
+                    {
+                        listKillable.Add(new Vector2Int(XPos + forwardSpace, YPos - sideSpace));
+                    }
                 }
                 else
                 {
@@ -42,7 +49,10 @@ public class Knight : ChessPiece
             {
                 if (pieceOnBoard[XPos - forwardSpace, YPos + sideSpace] != null)
                 {
-                    listKillable.Add(new Vector2Int(XPos - forwardSpace, YPos + sideSpace));
+                    if (pieceOnBoard[XPos - forwardSpace, YPos + sideSpace].team != team)
+                    {
+                        listKillable.Add(new Vector2Int(XPos - forwardSpace, YPos + sideSpace));
+                    }
                 }
                 else
                 {
@@ -54,7 +64,10 @@ public class Knight : ChessPiece
             {
                 if (pieceOnBoard[XPos - forwardSpace, YPos - sideSpace] != null)
                 {
-                    listKillable.Add(new Vector2Int(XPos - forwardSpace, YPos - sideSpace));
+                    if (pieceOnBoard[XPos - forwardSpace, YPos - sideSpace].team != team)
+                    {
+                        listKillable.Add(new Vector2Int(XPos - forwardSpace, YPos - sideSpace));
+                    }
                 }
                 else
                 {
@@ -69,7 +82,10 @@ public class Knight : ChessPiece
             {
                 if (pieceOnBoard[XPos - sideSpace, YPos - forwardSpace] != null)
                 {
-                    listKillable.Add(new Vector2Int(XPos-sideSpace, YPos -forwardSpace));
+                    if (pieceOnBoard[XPos - sideSpace, YPos - forwardSpace].team != team)
+                    {
+                        listKillable.Add(new Vector2Int(XPos - sideSpace, YPos - forwardSpace));
+                    }
                 }
                 else
                 {
@@ -81,7 +97,10 @@ public class Knight : ChessPiece
             {
                 if (pieceOnBoard[XPos + sideSpace, YPos - forwardSpace] != null)
                 {
-                    listKillable.Add(new Vector2Int(XPos + sideSpace, YPos - forwardSpace));
+                    if (pieceOnBoard[XPos + sideSpace, YPos - forwardSpace].team != team)
+                    {
+                        listKillable.Add(new Vector2Int(XPos + sideSpace, YPos - forwardSpace));
+                    }
                 }
                 else
                 {
@@ -90,29 +109,35 @@ public class Knight : ChessPiece
             }
         }
 
-        if (YPos + 3 <= 7)
+        if (YPos + forwardSpace <= 7)
         {
-            if (XPos - 1 >= 0)
+            if (XPos - sideSpace >= 0)
             {
                 if (pieceOnBoard[XPos - sideSpace, YPos + forwardSpace] != null)
                 {
-                    listKillable.Add(new Vector2Int(XPos - 1, YPos + forwardSpace));
+                    if (pieceOnBoard[XPos - sideSpace, YPos + forwardSpace].team != team)
+                    {
+                        listKillable.Add(new Vector2Int(XPos - sideSpace, YPos + forwardSpace));
+                    }
                 }
                 else
                 {
-                    listMove.Add(new Vector2Int(XPos - 1, YPos + forwardSpace));
+                    listMove.Add(new Vector2Int(XPos - sideSpace, YPos + forwardSpace));
                 }
             }
 
             if (XPos + 1 <= 7)
             {
-                if (pieceOnBoard[XPos + 1, YPos + 3] != null)
+                if (pieceOnBoard[XPos + sideSpace, YPos + forwardSpace] != null)
                 {
-                    listKillable.Add(new Vector2Int(XPos + 1, YPos + 3));
+                    if(pieceOnBoard[XPos + sideSpace, YPos + forwardSpace].team != team)
+                    {
+                        listKillable.Add(new Vector2Int(XPos + sideSpace, YPos + forwardSpace));
+                    }
                 }
                 else
                 {
-                    listMove.Add(new Vector2Int(XPos + 1, YPos + 3));
+                    listMove.Add(new Vector2Int(XPos + sideSpace, YPos + forwardSpace));
                 }
             }
         }
