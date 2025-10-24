@@ -3,82 +3,180 @@ using UnityEngine;
 
 public class Queen : ChessPiece
 {
-    public override (List<Vector2Int>, List<Vector2Int>) GetAllPossibleMoves(ref ChessPiece[,] pieceOnBoard)
+    public override List<Vector2Int> GetAllPossibleMoves(ref ChessPiece[,] pieceOnBoard)
     {
         List<Vector2Int> listMove = new List<Vector2Int>();
-        List<Vector2Int> listKillable = new List<Vector2Int>();
 
-
-        //left
         for (int i = 1; i < 8; i++)
         {
-            if (XPos - i < 0)
+            int newXPos = XPos - i;
+            if (newXPos < 0 || pieceOnBoard[newXPos, YPos] != null)
             {
                 break;
             }
-            else if (pieceOnBoard[XPos - i, YPos] != null)
-            {
-                if (pieceOnBoard[XPos - i, YPos].team != team)
-                {
-                    listKillable.Add(new Vector2Int(XPos - i, YPos));
-                }
-                break;
-            }
-            listMove.Add(new Vector2Int(XPos - i, YPos));
+            listMove.Add(new Vector2Int(newXPos, YPos));
         }
 
-        //top
         for (int i = 1; i < 8; i++)
         {
-            if (YPos + i > 7)
+            int newYPos = YPos + i;
+            if (newYPos > 7 || pieceOnBoard[XPos, newYPos] != null)
             {
                 break;
             }
-            else if (pieceOnBoard[XPos, YPos + i] != null)
-            {
-                if (pieceOnBoard[XPos, YPos + i].team != team)
-                {
-                    listKillable.Add(new Vector2Int(XPos, YPos + i));
-                }
-                break;
-            }
-            listMove.Add(new Vector2Int(XPos, YPos + i));
+            listMove.Add(new Vector2Int(XPos, newYPos));
         }
 
-        //right
         for (int i = 1; i < 8; i++)
         {
-            if (XPos + i > 7)
+            int newXPos = XPos + i;
+            if (newXPos > 7 || pieceOnBoard[newXPos, YPos] != null)
             {
                 break;
             }
-            else if (pieceOnBoard[XPos + i, YPos] != null)
-            {
-                if (pieceOnBoard[XPos + i, YPos].team != team)
-                {
-                    listKillable.Add(new Vector2Int(XPos + i, YPos));
-                }
-                break;
-            }
-            listMove.Add(new Vector2Int(XPos + i, YPos));
+            listMove.Add(new Vector2Int(newXPos, YPos));
         }
 
-        //right
         for (int i = 1; i < 8; i++)
         {
-            if (YPos - i < 0)
+            int newYPos = YPos - i;
+            if (newYPos < 0 || pieceOnBoard[XPos, newYPos] != null)
             {
                 break;
             }
-            else if (pieceOnBoard[XPos, YPos - i] != null)
+            listMove.Add(new Vector2Int(XPos, newYPos));
+        }
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newXPos = XPos - i;
+            int newYPos = YPos + i;
+            if ((newXPos < 0 || newYPos > 7) || pieceOnBoard[newXPos, newYPos] != null)
             {
-                if (pieceOnBoard[XPos, YPos - i].team != team)
+                break;
+            }
+            listMove.Add(new Vector2Int(newXPos, newYPos));
+        }
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newXPos = XPos + i;
+            int newYPos = YPos + i;
+            if ((newXPos > 7 || newYPos > 7) || pieceOnBoard[newXPos, newYPos] != null)
+            {
+                break;
+            }
+            listMove.Add(new Vector2Int(newXPos, newYPos));
+        }
+
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newXPos = XPos - i;
+            int newYPos = YPos - i;
+            if ((newXPos < 0 || newYPos < 0) || pieceOnBoard[newXPos, newYPos] != null)
+            {
+                break;
+            }
+
+            listMove.Add(new Vector2Int(newXPos, newYPos));
+        }
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newXPos = XPos + i;
+            int newYPos = YPos - i;
+            if (newXPos > 7 || newYPos < 0)
+            {
+                break;
+            }
+
+            if (pieceOnBoard[newXPos, newYPos] != null)
+            {
+                break;
+            }
+            listMove.Add(new Vector2Int(newXPos, newYPos));
+        }
+
+
+        return listMove;
+
+    }
+
+    public override List<Vector2Int> GetAllPossibleAttack(ref ChessPiece[,] pieceOnBoard)
+    {
+        List<Vector2Int> listAttack = new List<Vector2Int>();
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newXPos = XPos - i;
+            if (newXPos < 0)
+            {
+                break;
+            }
+            else if (pieceOnBoard[newXPos, YPos] != null)
+            {
+                if (pieceOnBoard[newXPos, YPos].team != team)
                 {
-                    listKillable.Add(new Vector2Int(XPos, YPos - i));
+                    listAttack.Add(new Vector2Int(newXPos, YPos));
                 }
                 break;
             }
-            listMove.Add(new Vector2Int(XPos, YPos - i));
+            listAttack.Add(new Vector2Int(newXPos, YPos));
+        }
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newYPos = YPos + i;
+            if (newYPos > 7)
+            {
+                break;
+            }
+            else if (pieceOnBoard[XPos, newYPos] != null)
+            {
+                if (pieceOnBoard[XPos, newYPos].team != team)
+                {
+                    listAttack.Add(new Vector2Int(XPos, newYPos));
+                }
+                break;
+            }
+            listAttack.Add(new Vector2Int(XPos, newYPos));
+        }
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newXPos = XPos + i;
+            if (newXPos > 7)
+            {
+                break;
+            }
+            else if (pieceOnBoard[newXPos, YPos] != null)
+            {
+                if (pieceOnBoard[newXPos, YPos].team != team)
+                {
+                    listAttack.Add(new Vector2Int(newXPos, YPos));
+                }
+                break;
+            }
+            listAttack.Add(new Vector2Int(newXPos, YPos));
+        }
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newYPos = YPos - i;
+            if (newYPos < 0)
+            {
+                break;
+            }
+            else if (pieceOnBoard[XPos, newYPos] != null)
+            {
+                if (pieceOnBoard[XPos, newYPos].team != team)
+                {
+                    listAttack.Add(new Vector2Int(XPos, newYPos));
+                }
+                break;
+            }
+            listAttack.Add(new Vector2Int(XPos, newYPos));
         }
 
 
@@ -90,15 +188,16 @@ public class Queen : ChessPiece
             {
                 break;
             }
-            else if (pieceOnBoard[newXPos, newYPos] != null)
+
+            if (pieceOnBoard[newXPos, newYPos] != null)
             {
                 if (pieceOnBoard[newXPos, newYPos].team != team)
                 {
-                    listKillable.Add(new Vector2Int(newXPos, newYPos));
+                    listAttack.Add(new Vector2Int(newXPos, newYPos));
                 }
                 break;
             }
-            listMove.Add(new Vector2Int(newXPos, newYPos));
+            listAttack.Add(new Vector2Int(newXPos, newYPos));
         }
 
         for (int i = 1; i < 8; i++)
@@ -109,19 +208,19 @@ public class Queen : ChessPiece
             {
                 break;
             }
-            else if (pieceOnBoard[newXPos, newYPos] != null)
+
+            if (pieceOnBoard[newXPos, newYPos] != null)
             {
                 if (pieceOnBoard[newXPos, newYPos].team != team)
                 {
-                    listKillable.Add(new Vector2Int(newXPos, newYPos));
+                    listAttack.Add(new Vector2Int(newXPos, newYPos));
                 }
                 break;
             }
-            listMove.Add(new Vector2Int(newXPos, newYPos));
+            listAttack.Add(new Vector2Int(newXPos, newYPos));
         }
 
 
-        //left down diagonal;
         for (int i = 1; i < 8; i++)
         {
             int newXPos = XPos - i;
@@ -130,19 +229,18 @@ public class Queen : ChessPiece
             {
                 break;
             }
-            else if (pieceOnBoard[newXPos, newYPos] != null)
+
+            if (pieceOnBoard[newXPos, newYPos] != null)
             {
                 if (pieceOnBoard[newXPos, newYPos].team != team)
                 {
-                    listKillable.Add(new Vector2Int(newXPos, newYPos));
+                    listAttack.Add(new Vector2Int(newXPos, newYPos));
                 }
                 break;
             }
-            listMove.Add(new Vector2Int(newXPos, newYPos));
+            listAttack.Add(new Vector2Int(newXPos, newYPos));
         }
 
-
-        //right down diagonal;
         for (int i = 1; i < 8; i++)
         {
             int newXPos = XPos + i;
@@ -151,18 +249,181 @@ public class Queen : ChessPiece
             {
                 break;
             }
-            else if (pieceOnBoard[newXPos, newYPos] != null)
+
+            if (pieceOnBoard[newXPos, newYPos] != null)
             {
                 if (pieceOnBoard[newXPos, newYPos].team != team)
                 {
-                    listKillable.Add(new Vector2Int(newXPos, newYPos));
+                    listAttack.Add(new Vector2Int(newXPos, newYPos));
                 }
                 break;
             }
-            listMove.Add(new Vector2Int(newXPos, newYPos));
+            listAttack.Add(new Vector2Int(newXPos, newYPos));
         }
 
-        return (listMove, listKillable);
+        return listAttack;
+    }
 
+    public override List<Vector2Int> ProjectAttack(ref ChessPiece[,] pieceOnBoard, Vector2Int ignoredPosition)
+    {
+        List<Vector2Int> listAttack = new List<Vector2Int>();
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newXPos = XPos - i;
+            if (newXPos < 0)
+            {
+                break;
+            }
+            listAttack.Add(new Vector2Int(newXPos, YPos));
+            if (ignoredPosition.x == newXPos && ignoredPosition.y == YPos)
+            {
+                continue;
+            }
+            else if (pieceOnBoard[newXPos, YPos] != null)
+            {
+                break;
+            }
+
+        }
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newYPos = YPos + i;
+            if (newYPos > 7)
+            {
+                break;
+            }
+            listAttack.Add(new Vector2Int(XPos, newYPos));
+            if (ignoredPosition.x == XPos && ignoredPosition.y == newYPos)
+            {
+                continue;
+            }
+            else if (pieceOnBoard[XPos, newYPos] != null)
+            {
+                break;
+            }
+        }
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newXPos = XPos + i;
+            if (newXPos > 7)
+            {
+                break;
+            }
+            listAttack.Add(new Vector2Int(newXPos, YPos));
+            if (ignoredPosition.x == newXPos && ignoredPosition.y == YPos)
+            {
+                continue;
+            }
+            else if (pieceOnBoard[newXPos, YPos] != null)
+            {
+                break;
+            }
+        }
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newYPos = YPos - i;
+            if (newYPos < 0)
+            {
+                break;
+            }
+            listAttack.Add(new Vector2Int(XPos, newYPos));
+            if (ignoredPosition.x == XPos && ignoredPosition.y == newYPos)
+            {
+                continue;
+            }
+            else if (pieceOnBoard[XPos, newYPos] != null)
+            {
+                break;
+            }
+        }
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newXPos = XPos - i;
+            int newYPos = YPos + i;
+            if (newXPos < 0 || newYPos > 7)
+            {
+                break;
+            }
+
+            listAttack.Add(new Vector2Int(newXPos, newYPos));
+            if (ignoredPosition.x == newXPos && ignoredPosition.y == newYPos)
+            {
+                continue;
+            }
+            else if (pieceOnBoard[newXPos, newYPos] != null)
+            {
+                break;
+            }
+        }
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newXPos = XPos + i;
+            int newYPos = YPos + i;
+
+            if (newXPos > 7 || newYPos > 7)
+            {
+                break;
+            }
+
+            listAttack.Add(new Vector2Int(newXPos, newYPos));
+
+            if (ignoredPosition.x == newXPos && ignoredPosition.y == newYPos)
+            {
+                continue;
+            } else  if (pieceOnBoard[newXPos, newYPos] != null)
+            {
+                break;
+            }
+        }
+
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newXPos = XPos - i;
+            int newYPos = YPos - i;
+            if (newXPos < 0 || newYPos < 0)
+            {
+                break;
+            }
+
+            listAttack.Add(new Vector2Int(newXPos, newYPos));
+            if (ignoredPosition.x == newXPos && ignoredPosition.y == newYPos)
+            {
+                continue;
+            }
+            else if (pieceOnBoard[newXPos, newYPos] != null)
+            {
+                break;
+            }
+        }
+
+        for (int i = 1; i < 8; i++)
+        {
+            int newXPos = XPos + i;
+            int newYPos = YPos - i;
+            if (newXPos > 7 || newYPos < 0)
+            {
+                break;
+            }
+
+            listAttack.Add(new Vector2Int(newXPos, newYPos));
+            if (ignoredPosition.x == newXPos && ignoredPosition.y == newYPos)
+            {
+                continue;
+            }
+            else if (pieceOnBoard[newXPos, newYPos] != null)
+            {
+                break;
+            }
+        }
+
+
+        return listAttack;
     }
 }

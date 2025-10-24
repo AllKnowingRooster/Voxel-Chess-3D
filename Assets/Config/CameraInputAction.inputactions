@@ -1,0 +1,56 @@
+{
+    "name": "CameraInputAction",
+    "maps": [
+        {
+            "name": "Player",
+            "id": "25f1be6c-966a-4ec6-a4ed-c49f6ebef872",
+            "actions": [
+                {
+                    "name": "Camera Control",
+                    "type": "Button",
+                    "id": "df25fa5e-baba-4818-a0e4-35b362c7272d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "1D Axis",
+                    "id": "bbc1da2b-bcc1-476b-ae8f-732040c56663",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Camera Control",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Positive",
+                    "id": "7506e379-8755-42e7-ab56-8390db234c7a",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Camera Control",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Negative",
+                    "id": "6062a06e-dc5d-491a-bdc8-d80e091ff696",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Camera Control",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
