@@ -1,81 +1,131 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class Pawn : ChessPiece
 {
-    public int totalMove = 0;
+    public int prevTurn = 0;
     public Vector2Int prevPosition;
-
-    public override (List<Vector2Int>, List<Vector2Int>) GetAllPossibleMoves(ref ChessPiece[,] pieceOnBoard)
+    public override List<Vector2Int> GetAllPossibleMoves(ref ChessPiece[,] pieceOnBoard)
     {
         List<Vector2Int> listMove = new List<Vector2Int>();
-        List<Vector2Int> listKillable=new List<Vector2Int>();
-        int direction = team == 0 ? 1 : -1;
-        int border = team == 0 ? 7 : 0;
+        int direction = this.team == 0 ? 1 : -1;
+        int border = base.team == 0 ? 7 : 0;
 
-
-            if ( ( team==0 && XPos+direction<=border) || (team==1 && XPos+direction>=border) )
+        if ((team == 0 && XPos + direction <= border) || (team == 1 && XPos + direction >= border))
+        {
+            if (pieceOnBoard[XPos + direction, YPos] == null)
             {
-                if (pieceOnBoard[XPos+direction,YPos]==null)
+                listMove.Add(new Vector2Int(XPos + direction, YPos));
+
+                if (prevTurn == 0 && pieceOnBoard[XPos + direction + direction, YPos] == null)
                 {
-                    listMove.Add(new Vector2Int(XPos+direction,YPos));
-                    if (totalMove == 0 && pieceOnBoard[XPos + direction + direction, YPos] == null)
+                    listMove.Add(new Vector2Int(XPos + direction + direction, YPos));
+                }
+            }
+        }
+
+        return listMove;
+    }
+
+
+    public override List<Vector2Int> GetAllPossibleAttack(ref ChessPiece[,] pieceOnBoard)
+    {
+        List<Vector2Int> listAttack = new List<Vector2Int>();
+        int direction = this.team == 0 ? 1 : -1;
+        int border = base.team == 0 ? 7 : 0;
+        if (((team == 0 && XPos + direction <= border) || (team == 1 && XPos + direction >= border)) && YPos + 1 <= 7)
+        {
+                if (pieceOnBoard[XPos + direction, YPos + 1] != null)
+                {
+                    if (pieceOnBoard[XPos + direction, YPos + 1].team != team)
                     {
-                        listMove.Add(new Vector2Int(XPos+direction+direction,YPos));
+                        listAttack.Add(new Vector2Int(XPos + direction, YPos + 1));
                     }
                 }
-            }
-
-        if (((team == 0 && XPos + direction <= border) || (team == 1 && XPos + direction >= border)) && YPos+1<=7)
-        {
-            if (pieceOnBoard[XPos+direction,YPos+1]!=null)
-            {
-                if (pieceOnBoard[XPos+direction,YPos+1].team!=team)
-                {
-                    listKillable.Add(new Vector2Int(XPos+direction,YPos+1));
-                }
-            }
+            
         }
 
         if (((team == 0 && XPos + direction <= border) || (team == 1 && XPos + direction >= border)) && YPos - 1 >= 0)
         {
-            if (pieceOnBoard[XPos + direction, YPos - 1] != null)
-            {
-                if (pieceOnBoard[XPos + direction, YPos - 1].team != team)
+                if (pieceOnBoard[XPos + direction, YPos - 1] != null)
                 {
-                    listKillable.Add(new Vector2Int(XPos + direction, YPos - 1));
+                    if (pieceOnBoard[XPos + direction, YPos - 1].team != team)
+                    {
+                        listAttack.Add(new Vector2Int(XPos + direction, YPos - 1));
+                    }
                 }
-            }
         }
 
-        if ((XPos+direction<=border && team==0) || (XPos+direction>=border && team==1) )
+        if ((XPos + direction <= border && team == 0) || (XPos + direction >= border && team == 1))
         {
-            if (YPos+1<=7)
+            if (YPos + 1 <= 7)
             {
-                if (pieceOnBoard[XPos, YPos + 1] != null && pieceOnBoard[XPos, YPos+1].type == ChessPieceType.Pawn && pieceOnBoard[XPos,YPos+1].team!=team)
+                if (pieceOnBoard[XPos, YPos + 1] != null && pieceOnBoard[XPos, YPos + 1].type == ChessPieceType.Pawn && pieceOnBoard[XPos, YPos + 1].team != team)
                 {
                     Pawn pawnPiece = pieceOnBoard[XPos, YPos + 1].GetComponent<Pawn>();
-                    if (Math.Abs(pawnPiece.XPos-pawnPiece.prevPosition.x)==2 && pawnPiece.totalMove==1 )
+                    if (Math.Abs(pawnPiece.XPos - pawnPiece.prevPosition.x) == 2 && pawnPiece.prevTurn == ChessBoard.turnCount - 1)
                     {
-                        listKillable.Add(new Vector2Int(pawnPiece.XPos+direction,pawnPiece.YPos));
+                        listAttack.Add(new Vector2Int(pawnPiece.XPos + direction, pawnPiece.YPos));
                     }
                 }
             }
 
             if (YPos - 1 >= 0)
             {
-                if (pieceOnBoard[XPos, YPos - 1] != null && pieceOnBoard[XPos, YPos-1].type == ChessPieceType.Pawn && pieceOnBoard[XPos,YPos-1].team!=team)
+                if (pieceOnBoard[XPos, YPos - 1] != null && pieceOnBoard[XPos, YPos - 1].type == ChessPieceType.Pawn && pieceOnBoard[XPos, YPos - 1].team != team)
                 {
                     Pawn pawnPiece = pieceOnBoard[XPos, YPos - 1].GetComponent<Pawn>();
-                    if (Math.Abs(pawnPiece.XPos - pawnPiece.prevPosition.x) == 2 && pawnPiece.totalMove == 1)
+                    if (Math.Abs(pawnPiece.XPos - pawnPiece.prevPosition.x) == 2 && pawnPiece.prevTurn == ChessBoard.turnCount - 1)
                     {
-                        listKillable.Add(new Vector2Int(pawnPiece.XPos + direction, pawnPiece.YPos));
+                        listAttack.Add(new Vector2Int(pawnPiece.XPos + direction, pawnPiece.YPos));
                     }
                 }
             }
         }
+        return listAttack;
+    }
 
-        return (listMove,listKillable);
+    public override List<Vector2Int> ProjectAttack(ref ChessPiece[,] pieceOnBoard, Vector2Int ignoredPosition)
+    {
+        List<Vector2Int> listAttack = new List<Vector2Int>();
+        int direction = this.team == 0 ? 1 : -1;
+        int border = base.team == 0 ? 7 : 0;
+        if (((team == 0 && XPos + direction <= border) || (team == 1 && XPos + direction >= border)) && YPos + 1 <= 7)
+        {
+            listAttack.Add(new Vector2Int(XPos + direction, YPos + 1));
+        }
+
+        if (((team == 0 && XPos + direction <= border) || (team == 1 && XPos + direction >= border)) && YPos - 1 >= 0)
+        {
+           listAttack.Add(new Vector2Int(XPos + direction, YPos - 1));
+        }
+
+        return listAttack;
+    }
+
+    async public Task Promote(int team, int XPos, int YPos, Action<ChessPieceType, int, int, int> configurePiece)
+    {
+        int index = await MainGameUiManager.instance.promoteUI.ShowPromoteModalDialog();
+        Destroy(gameObject);
+        if (index == 0)
+        {
+            configurePiece(ChessPieceType.Queen, XPos, YPos, team);
+        }
+        else if (index == 1)
+        {
+            configurePiece(ChessPieceType.Rook, XPos, YPos, team);
+        }
+        else if (index == 2)
+        {
+            configurePiece(ChessPieceType.Knight, XPos, YPos, team);
+        }
+        else
+        {
+            configurePiece(ChessPieceType.Bishop, XPos, YPos, team);
+        }
     }
 }
