@@ -12,8 +12,11 @@ public class TimerUI : MonoBehaviour
 
     void Update()
     {
-        ReduceTime(ref (ChessBoard.whoTurn == 0 ? ref whiteTime : ref blackTime), secondPerMinute, ref (ChessBoard.whoTurn == 0 ? ref whiteTimeText : ref blackTimeText));
-        isTimeOut(ChessBoard.whoTurn, ref (ChessBoard.whoTurn == 0 ? ref whiteTime : ref blackTime));
+        if (!GameManager.instance.isGameover)
+        {
+            ReduceTime(ref (ChessBoard.whoTurn == 0 ? ref whiteTime : ref blackTime), secondPerMinute, ref (ChessBoard.whoTurn == 0 ? ref whiteTimeText : ref blackTimeText));
+            isTimeOut(ChessBoard.whoTurn, ref (ChessBoard.whoTurn == 0 ? ref whiteTime : ref blackTime));
+        }
     }
 
     void ReduceTime(ref float time, float secondPerMinute, ref TextMeshProUGUI timeText)

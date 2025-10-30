@@ -160,12 +160,40 @@ public class Server : MonoBehaviour
     void RegisterEvent()
     {
         NetUtility.S_WELCOME += OnWelcomeServer;
+        NetUtility.S_MAKE_MOVE += OnMakeMoveServer;
+        NetUtility.S_PROMOTE += OnPromoteServer;
+        NetUtility.S_CHANGE_TURN += OnChangeTurnServer;
+        NetUtility.S_REMATCH += OnRematchServer;
     }
 
     void UnregisterEvent()
     {
         NetUtility.S_WELCOME -= OnWelcomeServer;
+        NetUtility.S_MAKE_MOVE -= OnMakeMoveServer;
+        NetUtility.S_PROMOTE -= OnPromoteServer;
+        NetUtility.S_CHANGE_TURN -= OnChangeTurnServer;
+        NetUtility.S_REMATCH-= OnRematchServer;
     }
+
+    void OnChangeTurnServer(NetMessage msg, NetworkConnection connection)
+    {
+        Broadcast(msg);
+    }
+    void OnMakeMoveServer(NetMessage msg,NetworkConnection connection)
+    {
+        Broadcast(msg);
+    }
+
+    void OnPromoteServer(NetMessage msg, NetworkConnection connection)
+    {
+        Broadcast(msg);
+    }
+
+    void OnRematchServer(NetMessage msg, NetworkConnection connection)
+    {
+        Broadcast(msg);
+    }
+
 
     void OnWelcomeServer(NetMessage msg, NetworkConnection connection)
     {

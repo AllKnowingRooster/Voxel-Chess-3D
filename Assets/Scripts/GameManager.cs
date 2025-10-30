@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator EndGame()
     {
-        MainGameUiManager.instance.mainPanelUI.ShowEndResult(winner, winReason);
+        MainGameUiManager.instance.resultUI.ShowEndResult(winner, winReason);
         yield return null;
     }
 

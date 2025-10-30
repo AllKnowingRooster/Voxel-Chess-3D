@@ -4040,6 +4040,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91bce8cac793f6f4f807814944c3b418, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  assignedTeam: 0
   blueTilePrefab: {fileID: 2881387708304736074, guid: 5612ecb5ab7646d4784c19d81142abd1, type: 3}
   blackTilePrefab: {fileID: 6046595838920838527, guid: d017fc74eaa91f74da085f88a5571ba5, type: 3}
   borderTilePrefab: {fileID: 6049112678552112261, guid: 0d2bc18071e25b04cb56804431af26e7, type: 3}

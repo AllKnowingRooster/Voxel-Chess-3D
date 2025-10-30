@@ -96,7 +96,7 @@ public class Client : MonoBehaviour
             }
     }
 
-    void SendToServer(NetMessage msg)
+    public void SendToServer(NetMessage msg)
     {
         DataStreamWriter streamWriter;
         driver.BeginSend(connection,out streamWriter);
@@ -135,5 +135,7 @@ public class Client : MonoBehaviour
     {
         SceneManager.LoadScene(1);
     }
+
+
 
 }
