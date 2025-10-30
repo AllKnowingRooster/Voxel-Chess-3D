@@ -107,25 +107,31 @@ public class Pawn : ChessPiece
         return listAttack;
     }
 
-    async public Task Promote(int team, int XPos, int YPos, Action<ChessPieceType, int, int, int> configurePiece)
+
+
+    async public Task<ChessPieceType> Promote(int XPos,int YPos)
     {
-        int index = await MainGameUiManager.instance.promoteUI.ShowPromoteModalDialog();
-        Destroy(gameObject);
-        if (index == 0)
+        if((team == 0 && XPos == 7) || (team == 1 && XPos == 0))
         {
-            configurePiece(ChessPieceType.Queen, XPos, YPos, team);
+            Debug.Log("Promoting");
+            int index = await MainGameUiManager.instance.promoteUI.ShowPromoteModalDialog();
+            if (index == 0)
+            {
+                return ChessPieceType.Queen;
+            }
+            else if (index == 1)
+            {
+                return ChessPieceType.Rook;
+            }
+            else if (index == 2)
+            {
+                return ChessPieceType.Knight;
+            }
+            else
+            {
+                return ChessPieceType.Bishop;
+            }
         }
-        else if (index == 1)
-        {
-            configurePiece(ChessPieceType.Rook, XPos, YPos, team);
-        }
-        else if (index == 2)
-        {
-            configurePiece(ChessPieceType.Knight, XPos, YPos, team);
-        }
-        else
-        {
-            configurePiece(ChessPieceType.Bishop, XPos, YPos, team);
-        }
+        return ChessPieceType.None;
     }
 }

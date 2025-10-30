@@ -10,7 +10,8 @@ public enum ChessPieceType
     Bishop = 2,
     Rook = 3,
     Queen = 4,
-    King = 5
+    King = 5,
+    None=6
 }
 public class ChessPiece : MonoBehaviour
 {

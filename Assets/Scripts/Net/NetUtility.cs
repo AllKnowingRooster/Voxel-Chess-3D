@@ -9,7 +9,10 @@ public enum OpCode
     WELCOME = 2,
     START_GAME = 3,
     MAKE_MOVE = 4,
-    REMATCH = 5,
+    PROMOTE=5,
+    CHANGE_TURN=6,
+    END_GAME=7,
+    REMATCH = 8,
 }
 public static class NetUtility 
 {
@@ -34,9 +37,21 @@ public static class NetUtility
         {
             msg=new NetMakeMove(streamReader);
         }
+        else if (opcode==OpCode.PROMOTE)
+        {
+            msg = new NetPromote(streamReader);
+        }
+        else if (opcode==OpCode.CHANGE_TURN)
+        {
+            msg=new NetChangeTurn(streamReader);
+        }
+        else if (opcode == OpCode.END_GAME)
+        {
+            msg = new NetEndGame(streamReader);
+        }
         else if (opcode == OpCode.REMATCH)
         {
-
+            msg = new NetRematch(streamReader);
         }
 
         if (server != null) {
@@ -53,9 +68,15 @@ public static class NetUtility
     public static Action<NetMessage> C_WELCOME;
     public static Action<NetMessage> C_START_GAME;
     public static Action<NetMessage> C_MAKE_MOVE;
+    public static Action<NetMessage> C_PROMOTE;
+    public static Action<NetMessage> C_END_GAME;
+    public static Action<NetMessage> C_CHANGE_TURN;
     public static Action<NetMessage> C_REMATCH;
     public static Action<NetMessage, NetworkConnection> S_WELCOME;
     public static Action<NetMessage, NetworkConnection> S_START_GAME;
     public static Action<NetMessage, NetworkConnection> S_MAKE_MOVE;
+    public static Action<NetMessage, NetworkConnection> S_PROMOTE;
+    public static Action<NetMessage, NetworkConnection> S_CHANGE_TURN;
+    public static Action<NetMessage, NetworkConnection> S_END_GAME;
     public static Action<NetMessage, NetworkConnection> S_REMATCH;
 }
