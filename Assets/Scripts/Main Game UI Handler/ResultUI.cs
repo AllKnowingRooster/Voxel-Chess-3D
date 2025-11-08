@@ -1,4 +1,3 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -35,6 +34,8 @@ public class ResultUI : MonoBehaviour
         {
             Destroy(Server.instance.gameObject);
         }
+        Destroy(GameManager.instance.gameObject);
+        Destroy(AudioManager.instance.gameObject);
         SceneManager.LoadScene(0);
     }
 
@@ -68,7 +69,7 @@ public class ResultUI : MonoBehaviour
         gameObject.SetActive(true);
     }
 
-    public void SetRematchText(string text,Color color)
+    public void SetRematchText(string text, Color color)
     {
         rematchText.text = text;
         rematchText.color = color;
