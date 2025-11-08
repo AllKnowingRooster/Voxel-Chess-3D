@@ -41,8 +41,9 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance!=null)
+        if (instance != null)
         {
+            Destroy(gameObject);
             return;
         }
         instance = this;
@@ -53,12 +54,24 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded += SceneLoadLogic;
     }
 
-    public void SceneLoadLogic(Scene scene,LoadSceneMode mode)
+    public void SceneLoadLogic(Scene scene, LoadSceneMode mode)
     {
-        if (scene.buildIndex==1)
+        if (scene.buildIndex == 1)
         {
             StartCoroutine(GameLoop());
         }
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= SceneLoadLogic;
+    }
+
+    public void ResetVariable()
+    {
+        isGameover = false;
+        startRoundTimer = 3.0f;
+        startingTime = 900.0f;
     }
 
     private IEnumerator GameLoop()
@@ -90,7 +103,7 @@ public class GameManager : MonoBehaviour
         yield return null;
     }
 
-    public void SetWinner(int team,WinReason reason)
+    public void SetWinner(int team, WinReason reason)
     {
         winner = team;
         winReason = reason;

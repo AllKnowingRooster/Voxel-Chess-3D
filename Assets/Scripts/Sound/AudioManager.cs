@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
-public class AudioManager : MonoBehaviour,IObserver
+public class AudioManager : MonoBehaviour, IObserver
 {
 
     public static AudioManager instance { get; private set; }
@@ -23,8 +23,8 @@ public class AudioManager : MonoBehaviour,IObserver
     [SerializeField] private AudioMixer audioMixer;
     public void OnNotify(UserAction action)
     {
-        SoundData sfx= soundMap[action];
-        if (sfx == null || (Time.time-sfx.cooldown<sfx.lastUsedTime))
+        SoundData sfx = soundMap[action];
+        if (sfx == null || (Time.time - sfx.cooldown < sfx.lastUsedTime))
         {
             return;
         }
@@ -45,15 +45,16 @@ public class AudioManager : MonoBehaviour,IObserver
     }
     private void Awake()
     {
-        if (instance!=null)
+        if (instance != null)
         {
+            Destroy(gameObject);
             return;
         }
 
-        instance= this;
+        instance = this;
         soundMap = new Dictionary<UserAction, SoundData>();
         UserAction[] listEnumValues = (UserAction[])Enum.GetValues(typeof(UserAction));
-        for (int i=0;i<listSoundEffect.Count;i++)
+        for (int i = 0; i < listSoundEffect.Count; i++)
         {
             soundMap[listEnumValues[i]] = listSoundEffect[i];
         }
@@ -63,20 +64,20 @@ public class AudioManager : MonoBehaviour,IObserver
         masterVolumeSlider.onValueChanged.RemoveAllListeners();
         musicVolumeSlider.onValueChanged.RemoveAllListeners();
         sfxVolumeSlider.onValueChanged.RemoveAllListeners();
-        masterVolumeSlider.onValueChanged.AddListener((float val) => {updateAudioMixer("Master Volume",masterVolumeText, val); });
-        musicVolumeSlider.onValueChanged.AddListener((float val) => { updateAudioMixer("Music Volume",musicVolumeText, val); });
-        sfxVolumeSlider.onValueChanged.AddListener((float val) => { updateAudioMixer("SFX Volume",sfxVolumeText, val); });
+        masterVolumeSlider.onValueChanged.AddListener((float val) => { updateAudioMixer("Master Volume", masterVolumeText, val); });
+        musicVolumeSlider.onValueChanged.AddListener((float val) => { updateAudioMixer("Music Volume", musicVolumeText, val); });
+        sfxVolumeSlider.onValueChanged.AddListener((float val) => { updateAudioMixer("SFX Volume", sfxVolumeText, val); });
         masterVolumeSlider.value = 0.5f;
         musicVolumeSlider.value = 0.5f;
         sfxVolumeSlider.value = 0.5f;
     }
 
 
-    void updateAudioMixer(string groupParam ,TextMeshProUGUI text,float value)
+    void updateAudioMixer(string groupParam, TextMeshProUGUI text, float value)
     {
         float toDecibel = Mathf.Clamp(Mathf.Log10(value) * 20, -80.0f, 0);
-        audioMixer.SetFloat(groupParam,toDecibel);
-        text.text = Mathf.Floor(value / 1 * 100).ToString()+"%";
+        audioMixer.SetFloat(groupParam, toDecibel);
+        text.text = Mathf.Floor(value / 1 * 100).ToString() + "%";
     }
 
 
