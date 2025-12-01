@@ -8,7 +8,7 @@ public class ResultUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI resultText;
     [SerializeField] private TextMeshProUGUI rematchText;
     [SerializeField] private Button exitButton;
-    [SerializeField] private Button rematchButton;
+    [SerializeField] public Button rematchButton;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
@@ -20,10 +20,7 @@ public class ResultUI : MonoBehaviour
     private void Exit()
     {
         gameObject.SetActive(false);
-        NetRematch nr = new NetRematch();
-        nr.teamId = GameManager.instance.assignedTeam;
-        nr.wantRematch = 0;
-        Client.instance.SendToServer(nr);
+        GameManager.instance.gameMode.Exit();
         Invoke("ChangeScene", 2.0f);
     }
 
@@ -34,17 +31,12 @@ public class ResultUI : MonoBehaviour
         {
             Destroy(Server.instance.gameObject);
         }
-        Destroy(GameManager.instance.gameObject);
-        Destroy(AudioManager.instance.gameObject);
         SceneManager.LoadScene(0);
     }
 
     private void SendRematch()
     {
-        NetRematch nr = new NetRematch();
-        nr.teamId = GameManager.instance.assignedTeam;
-        nr.wantRematch = 1;
-        Client.instance.SendToServer(nr);
+        GameManager.instance.gameMode.Rematch();
         rematchButton.interactable = false;
     }
 

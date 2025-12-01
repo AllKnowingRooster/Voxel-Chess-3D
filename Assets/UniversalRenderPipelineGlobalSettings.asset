@@ -61,6 +61,7 @@ MonoBehaviour:
       - rid: 1826012885254668585
       - rid: 1826012885254668586
       - rid: 1826012885254668587
+      - rid: 4590925708514033664
     m_RuntimeSettings:
       m_List:
       - rid: 1826012885254668562
@@ -97,6 +98,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 1826012885254668560
       type: {class: Renderer2DResources, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.Runtime}
       data:
@@ -393,3 +396,7 @@ MonoBehaviour:
       data:
         m_Version: 0
         m_CoreCopyPS: {fileID: 4800000, guid: 12dc59547ea167a4ab435097dd0f9add, type: 3}
+    - rid: 4590925708514033664
+      type: {class: RenderingDebuggerRuntimeResources, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Core.Runtime}
+      data:
+        m_version: 0

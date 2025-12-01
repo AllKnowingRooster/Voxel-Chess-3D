@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TabGroup : MonoBehaviour
 {
-    [SerializeField] private List<Tab> listTab= new List<Tab>();
+    [SerializeField] private List<Tab> listTab = new List<Tab>();
     [SerializeField] private List<GameObject> listPage;
     private Tab activeTab;
     [SerializeField] private Color idleColor;
@@ -20,20 +20,20 @@ public class TabGroup : MonoBehaviour
     }
     public void ResetTab()
     {
-        for (int i=0;i<listTab.Count;i++)
+        for (int i = 0; i < listTab.Count; i++)
         {
-            if (activeTab!=null && listTab[i]==activeTab)
+            if (activeTab != null && listTab[i] == activeTab)
             {
                 continue;
             }
-            listTab[i].tabBackground.color= idleColor;
-            listTab[i].tabText.color= idleTextColor;
+            listTab[i].tabBackground.color = idleColor;
+            listTab[i].tabText.color = idleTextColor;
         }
     }
 
-    public void OnSelect(Tab tab,bool isClicked)
+    public void OnSelect(Tab tab, bool isClicked)
     {
-        if (tab==activeTab)
+        if (tab == activeTab)
         {
             return;
         }
@@ -42,19 +42,19 @@ public class TabGroup : MonoBehaviour
         tab.tabText.color = activeTextColor;
         if (isClicked)
         {
-            Deselect(tab,activeTab.transform.GetSiblingIndex());
+            Deselect(tab, activeTab.transform.GetSiblingIndex());
             activeTab = tab;
-            int index=tab.transform.GetSiblingIndex();
+            int index = tab.transform.GetSiblingIndex();
             listPage[index].gameObject.SetActive(true);
-            CanvasManager.instance.NotifyObserver(UserAction.Click);
+            GameManager.instance.NotifyObserver(UserAction.Click);
         }
         else
         {
-            CanvasManager.instance.NotifyObserver(UserAction.Hover);
+            GameManager.instance.NotifyObserver(UserAction.Hover);
         }
     }
 
-    private void Deselect(Tab tab,int index)
+    private void Deselect(Tab tab, int index)
     {
         activeTab.tabBackground.color = idleColor;
         activeTab.tabText.color = idleTextColor;

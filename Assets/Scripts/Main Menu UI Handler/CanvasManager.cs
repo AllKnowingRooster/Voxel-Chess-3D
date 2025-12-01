@@ -1,13 +1,11 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UI.Animate;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class CanvasManager : MonoBehaviour,ISubject
+public class CanvasManager : MonoBehaviour
 {
     private IState currentState;
     [HideInInspector] public static CanvasManager instance;
@@ -28,8 +26,6 @@ public class CanvasManager : MonoBehaviour,ISubject
 
     private string hostMenuFlyingStateName;
     private string hostMenuFfallingStateName;
-
-    private List<IObserver> listObserver;
 
     private string connectMenuSlideOutStateName;
     private string connectMenuSlideinStateName;
@@ -58,11 +54,11 @@ public class CanvasManager : MonoBehaviour,ISubject
     [SerializeField] private Button hostMenuReturnButton;
     private void Awake()
     {
-        if (instance!=null)
+        if (instance != null)
         {
             return;
         }
-        instance= this;
+        instance = this;
         flyingTrigger = "Flying";
         fallingTrigger = "Falling";
         startMenuflyingStateName = "startMenuCanvasFlying";
@@ -76,11 +72,10 @@ public class CanvasManager : MonoBehaviour,ISubject
         hostMenuFfallingStateName = "hostMenuCanvasFalling";
         hostMenuFlyingStateName = "hostMenuCanvasFlying";
         canvasAnimator = new CanvasAnimator();
-        startMenuState= new UIState(startMenuAnimator, startMenufallingStateName, fallingTrigger, startMenuflyingStateName, flyingTrigger);
+        startMenuState = new UIState(startMenuAnimator, startMenufallingStateName, fallingTrigger, startMenuflyingStateName, flyingTrigger);
         mainMenuState = new UIState(mainMenuAnimator, mainMenuslideInStateName, slideInTrigger, mainMenuslideOutStateName, slideOutTrigger);
         connectMenuState = new UIState(connectMenuAnimator, connectMenuSlideinStateName, slideInTrigger, connectMenuSlideOutStateName, slideOutTrigger);
         hostMenuState = new UIState(hostMenuAnimator, hostMenuFlyingStateName, flyingTrigger, hostMenuFfallingStateName, fallingTrigger);
-        listObserver = new List<IObserver>();
         ConfigButton();
     }
 
@@ -91,7 +86,7 @@ public class CanvasManager : MonoBehaviour,ISubject
         quitButton.onClick.RemoveAllListeners();
         quitButton.onClick.AddListener(() => { Exit(); });
         offlineButton.onClick.RemoveAllListeners();
-        offlineButton.onClick.AddListener(() => { SceneManager.LoadScene(1); });
+        offlineButton.onClick.AddListener(() => { SceneManager.LoadScene(1); GameManager.instance.gameMode = new SinglePlayer(); });
         hostButton.onClick.RemoveAllListeners();
         hostButton.onClick.AddListener(() => { GoToHostMenu(); });
         connectButton.onClick.RemoveAllListeners();
@@ -108,29 +103,11 @@ public class CanvasManager : MonoBehaviour,ISubject
         connectConnectButton.onClick.AddListener(() => { ConnectHost(); });
     }
 
-    public void AddObserver(IObserver observer)
-    {
-        listObserver.Add(observer);
-    }
-
-    public void NotifyObserver(UserAction action)
-    {
-        for (int i=0;i<listObserver.Count;i++)
-        {
-            listObserver[i].OnNotify(action);
-        }
-    }
-
-    public void RemoveObserver(IObserver observer)
-    {
-        listObserver.Add(observer);
-    }
-
     private IEnumerator ChangeState(IState state)
     {
-        if (currentState!=null)
+        if (currentState != null)
         {
-          yield return currentState.ExitState();
+            yield return currentState.ExitState();
         }
         currentState = state;
         yield return currentState.StartState();
@@ -148,7 +125,7 @@ public class CanvasManager : MonoBehaviour,ISubject
 
     private void GoToStartMenu()
     {
-       StartCoroutine(StartMenuRoutine());
+        StartCoroutine(StartMenuRoutine());
     }
 
     private void GoToHostMenu()
@@ -169,6 +146,7 @@ public class CanvasManager : MonoBehaviour,ISubject
     private void ConnectHost()
     {
         GameManager.instance.CreateClientManager().Init(connectInputField.text, 9000);
+        GameManager.instance.gameMode = new MultiPlayer();
     }
 
     private void ClearInputField()
@@ -183,14 +161,15 @@ public class CanvasManager : MonoBehaviour,ISubject
 
     public IEnumerator ExitRoutine()
     {
-        yield return StartCoroutine(canvasAnimator.WaitAnimationFinish(startMenuAnimator,flyingTrigger,startMenuflyingStateName));
-            Application.Quit();
-        
+        yield return StartCoroutine(canvasAnimator.WaitAnimationFinish(startMenuAnimator, flyingTrigger, startMenuflyingStateName));
+        Application.Quit();
+
     }
 
     private IEnumerator HostMenuRoutine()
     {
         yield return StartCoroutine(ChangeState(hostMenuState));
+        GameManager.instance.gameMode = new MultiPlayer();
         GameManager.instance.CreateServerManager().Init(9000);
         GameManager.instance.CreateClientManager().Init("127.0.0.1", 9000);
     }

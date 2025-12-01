@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Tab : MonoBehaviour,IPointerClickHandler,IPointerEnterHandler,IPointerExitHandler
+public class Tab : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
 
     [SerializeField] private TabGroup tabGroup;
@@ -12,7 +12,7 @@ public class Tab : MonoBehaviour,IPointerClickHandler,IPointerEnterHandler,IPoin
     public void OnPointerClick(PointerEventData eventData)
     {
         tabGroup.OnSelect(this, true);
-        CanvasManager.instance.NotifyObserver(UserAction.Click);
+        GameManager.instance.NotifyObserver(UserAction.Click);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
