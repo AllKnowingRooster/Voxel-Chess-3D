@@ -3,7 +3,7 @@ Single Player And Multi Player 3D Chess using voxel asset.
 Currently Multiplayer only work for local games/ LAN( I am working on Online Play world wide)
 
 How to Start Game:
-go to /build and run VoxelChess3D.exe
+go to /build and run Voxel-Chess-3D.exe
 
 How to Play:
 -Just Drag chess Piece onto the highlighted square(green = Move , red=Attack) 
