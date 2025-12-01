@@ -1,6 +1,5 @@
-using UnityEngine;
-using UI.Animate;
 using System.Collections;
+using UnityEngine;
 
 public class UIState : IState
 {

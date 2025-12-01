@@ -16,9 +16,9 @@ public enum WinReason
     Timeout
 }
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, ISubject
 {
-
+    public List<IObserver> listObserver;
     public static GameManager instance;
 
     [HideInInspector] public int assignedTeam;
@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public float startingTime;
     [HideInInspector] public int winner;
     [HideInInspector] public WinReason winReason;
-
+    public IGameMode gameMode;
     private void Awake()
     {
         if (instance != null)
@@ -51,13 +51,35 @@ public class GameManager : MonoBehaviour
         isGameover = false;
         startRoundTimer = 3.0f;
         startingTime = 900.0f;
+        listObserver = new List<IObserver>();
         SceneManager.sceneLoaded += SceneLoadLogic;
+    }
+
+    public void AddObserver(IObserver observer)
+    {
+        listObserver.Add(observer);
+    }
+
+    public void NotifyObserver(UserAction action)
+    {
+        Debug.Log(GetInstanceID());
+        for (int i = 0; i < listObserver.Count; i++)
+        {
+            listObserver[i].OnNotify(action);
+        }
+    }
+
+    public void RemoveObserver(IObserver observer)
+    {
+        listObserver.Remove(observer);
     }
 
     public void SceneLoadLogic(Scene scene, LoadSceneMode mode)
     {
         if (scene.buildIndex == 1)
         {
+            isGameover = false;
+            startingTime = 900.0f;
             StartCoroutine(GameLoop());
         }
     }

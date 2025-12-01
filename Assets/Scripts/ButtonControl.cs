@@ -1,10 +1,9 @@
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ButtonControl : MonoBehaviour,IPointerEnterHandler, IPointerExitHandler,IPointerClickHandler
+public class ButtonControl : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [SerializeField] private Color hoverBackgroundColor;
     [SerializeField] private Color hoverTextColor;
@@ -25,11 +24,11 @@ public class ButtonControl : MonoBehaviour,IPointerEnterHandler, IPointerExitHan
     public void OnPointerEnter(PointerEventData eventData)
     {
         buttonBackground.color = hoverBackgroundColor;
-        if (buttonText!=null)
+        if (buttonText != null)
         {
             buttonText.color = hoverTextColor;
         }
-        CanvasManager.instance.NotifyObserver(UserAction.Hover);
+        GameManager.instance.NotifyObserver(UserAction.Hover);
     }
 
 
@@ -45,6 +44,6 @@ public class ButtonControl : MonoBehaviour,IPointerEnterHandler, IPointerExitHan
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        CanvasManager.instance.NotifyObserver(UserAction.Click);
+        GameManager.instance.NotifyObserver(UserAction.Click);
     }
 }

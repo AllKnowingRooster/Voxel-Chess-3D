@@ -24,13 +24,13 @@ public class Client : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void Init(string ip,ushort port)
+    public void Init(string ip, ushort port)
     {
         driver = NetworkDriver.Create(new NetworkSettings());
-        NetworkEndpoint endPoint=NetworkEndpoint.Parse(ip, port);
+        NetworkEndpoint endPoint = NetworkEndpoint.Parse(ip, port);
         endPoint.Port = port;
-        connection=driver.Connect(endPoint);
-        isActive= true;
+        connection = driver.Connect(endPoint);
+        isActive = true;
         RegisterToEvent();
     }
 
@@ -40,7 +40,7 @@ public class Client : MonoBehaviour
         {
             UnregisterToEvent();
             driver.Dispose();
-            connection=default(NetworkConnection);
+            connection = default(NetworkConnection);
             isActive = false;
         }
     }
@@ -48,6 +48,7 @@ public class Client : MonoBehaviour
     private void OnDestroy()
     {
         Shutdown();
+        GameManager.instance.gameMode = null;
     }
 
     void Update()
@@ -74,32 +75,32 @@ public class Client : MonoBehaviour
     void UpdateMessagePump()
     {
         DataStreamReader streamReader;
-            NetworkEvent.Type cmd;
-            while ((cmd = driver.PopEventForConnection(connection, out streamReader)) != NetworkEvent.Type.Empty)
+        NetworkEvent.Type cmd;
+        while ((cmd = driver.PopEventForConnection(connection, out streamReader)) != NetworkEvent.Type.Empty)
+        {
+            if (cmd == NetworkEvent.Type.Data)
             {
-                if (cmd == NetworkEvent.Type.Data)
-                {
-                    NetUtility.OnData(streamReader, connection);
-                }
-                else if (cmd == NetworkEvent.Type.Disconnect)
-                {
-                    Debug.Log("Client Disconnected from Server");
-                    connection = default(NetworkConnection);
-                    connectionDropped?.Invoke();
-                    Shutdown();
-                }
-                else if(cmd==NetworkEvent.Type.Connect)
-                {
-                    Debug.Log("Connected");
-                    SendToServer(new NetWelcome());
-                }
+                NetUtility.OnData(streamReader, connection);
             }
+            else if (cmd == NetworkEvent.Type.Disconnect)
+            {
+                Debug.Log("Client Disconnected from Server");
+                connection = default(NetworkConnection);
+                connectionDropped?.Invoke();
+                Shutdown();
+            }
+            else if (cmd == NetworkEvent.Type.Connect)
+            {
+                Debug.Log("Connected");
+                SendToServer(new NetWelcome());
+            }
+        }
     }
 
     public void SendToServer(NetMessage msg)
     {
         DataStreamWriter streamWriter;
-        driver.BeginSend(connection,out streamWriter);
+        driver.BeginSend(connection, out streamWriter);
         msg.Serialize(ref streamWriter);
         driver.EndSend(streamWriter);
     }
@@ -115,7 +116,7 @@ public class Client : MonoBehaviour
     {
         NetUtility.C_KEEP_ALIVE -= OnKeepAlive;
         NetUtility.C_WELCOME -= OnWelcomeClient;
-        NetUtility.C_START_GAME -= OnStartGame; 
+        NetUtility.C_START_GAME -= OnStartGame;
     }
 
     void OnKeepAlive(NetMessage msg)

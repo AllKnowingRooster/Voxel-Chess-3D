@@ -71,6 +71,8 @@ public class ChessBoard : MonoBehaviour
         turnCount = 1;
         hasPlayerMove = false;
         playerWantRematch = new bool[2];
+        GameManager.instance.gameMode.SetBoard(this);
+        Debug.Log(GameManager.instance.gameMode);
         GenerateBoard();
         RegisterEvent();
     }
@@ -105,7 +107,7 @@ public class ChessBoard : MonoBehaviour
 
                 if (selectedPiece == null && currentPointer != noTarget && listChessPiece[tileIndex.x, tileIndex.y] != null && Mouse.current.leftButton.wasPressedThisFrame)
                 {
-                    if (whoTurn == listChessPiece[tileIndex.x, tileIndex.y].team && GameManager.instance.assignedTeam == whoTurn)
+                    if (whoTurn == listChessPiece[tileIndex.x, tileIndex.y].team && (GameManager.instance.gameMode is SinglePlayer || (GameManager.instance.gameMode is MultiPlayer && GameManager.instance.assignedTeam == whoTurn)))
                     {
                         selectedPiece = listChessPiece[tileIndex.x, tileIndex.y];
                         listKillable = selectedPiece.GetAllPossibleAttack(ref listChessPiece);
@@ -145,9 +147,7 @@ public class ChessBoard : MonoBehaviour
                     }
                     else
                     {
-                        ClientMakeMove(currentPointer.x, currentPointer.y, prevPos);
-                        await ClientPromote(currentPointer.x, currentPointer.y);
-                        Client.instance.SendToServer(new NetChangeTurn());
+                        await GameManager.instance.gameMode.Move(selectedPiece, currentPointer.x, currentPointer.y, prevPos);
                     }
                 }
             }
@@ -161,7 +161,7 @@ public class ChessBoard : MonoBehaviour
         HideHighlight();
     }
 
-    async private Task ClientPromote(int x, int y)
+    async public Task ClientPromote(ChessPiece selectedPiece, int x, int y)
     {
         if (selectedPiece.type == ChessPieceType.Pawn)
         {
@@ -180,7 +180,7 @@ public class ChessBoard : MonoBehaviour
         }
     }
 
-    private void ChangeTurn()
+    public void ChangeTurn()
     {
         if (CheckCheckmate(selectedPiece.team == 0 ? blackKing : whiteKing, selectedPiece, ref listChessPiece))
         {
@@ -217,7 +217,7 @@ public class ChessBoard : MonoBehaviour
         }
     }
 
-    private bool MovePiece(int x, int y, Vector2Int prevPos)
+    public bool MovePiece(int x, int y, Vector2Int prevPos)
     {
 
         ChessPiece overlapPiece = listChessPiece[x, y];
@@ -684,7 +684,7 @@ public class ChessBoard : MonoBehaviour
         MovePiece(nmm.xPos, nmm.yPos, new Vector2Int(nmm.originalXPos, nmm.originalYPos));
     }
 
-    private void TurnOnPlayerCamera()
+    public void TurnOnPlayerCamera()
     {
         Transform cameraParent = GameObject.Find("Cameras").transform;
         if (GameManager.instance.assignedTeam == 1)
@@ -697,7 +697,7 @@ public class ChessBoard : MonoBehaviour
         }
     }
 
-    private void ClientMakeMove(int x, int y, Vector2Int prevpos)
+    public void ClientMakeMove(int x, int y, Vector2Int prevpos)
     {
         NetMakeMove nmm = new NetMakeMove();
         nmm.originalYPos = prevpos.y;
@@ -730,6 +730,7 @@ public class ChessBoard : MonoBehaviour
             else
             {
                 MainGameUiManager.instance.resultUI.SetRematchText("Opponent Has Left", Color.red);
+                MainGameUiManager.instance.resultUI.rematchButton.interactable = false;
             }
         }
 
