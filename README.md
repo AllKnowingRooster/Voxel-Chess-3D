@@ -11,6 +11,7 @@ Currently Multiplayer only work for local games/ LAN( I am working on Online Pla
 
 # you lose when
 1.timer runout
+
 2.checkmate
 
 # draw when
