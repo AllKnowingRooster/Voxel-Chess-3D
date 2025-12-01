@@ -13,7 +13,7 @@ you lose when:
 -checkmate
 
 draw when:
--Stalemate(you or opponent cannot make a move but their king is not checked)
+-Stalemate(you or opponent cannot make a move but king is not checked)
 
 Bugs:
 -Sound calculation Bugs(UI Bugs)(currently figuring Out why my calculation is wrong)
